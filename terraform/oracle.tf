@@ -12,7 +12,9 @@ resource "oci_core_instance" "test_instance" {
   compartment_id = var.tenancy
   create_vnic_details {
       subnet_id = var.subnetid
+      hostname_label = var.hostname
   }
+  display_name = var.displayname
   metadata = {
       ssh_authorized_keys = file(var.sshkeyfile)
   }

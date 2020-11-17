@@ -25,7 +25,7 @@ endif
 terraform:
 	cd terraform; \
 	terraform init; \
-	terraform apply -auto-approve
+	terraform apply -auto-approve -var="hostname=$(HOSTNAME)" -var="displayname=$(DISPLAYNAME)"
 
 tf: terraform
 

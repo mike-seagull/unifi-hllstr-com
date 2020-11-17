@@ -16,3 +16,9 @@ variable "subnetid" {
 variable "sshkeyfile" {
   type = string
 }
+variable "hostname" {
+  type = string
+}
+variable "displayname" {
+  type = string
+}
