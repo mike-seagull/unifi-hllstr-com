@@ -1,0 +1,45 @@
+---
+- hosts: "{{ domain }}"
+  become: yes
+  roles:
+    - common
+  tasks:
+    - name: install unifi controller
+      block:
+        - name: run "apt-get update"
+          apt:
+            update_cache: yes
+        - name: install script dependencies
+          apt:
+            name:
+              - ca-certificates
+              - wget
+        - name: download install script
+          get_url:
+            url: https://get.glennr.nl/unifi/install/install_latest/unifi-latest.sh
+            dest: /root/unifi-latest.sh
+            mode: '0744'
+        - name: run install script
+          shell: bash -c "bash /root/unifi-latest.sh --skip --fqdn {{ domain }} --email {{ email }} >> /tmp/unifi.ansible.dbg.log"
+    - name: kill iptables
+      service:
+        name: iptables
+        state: stopped
+        enabled: no
+    - name: install lets encrypt
+      block:
+        - name: run "apt-get update"
+          apt:
+            update_cache: yes
+        - name: install script dependencies
+          apt:
+            name:
+              - ca-certificates
+              - wget
+        - name: download install script
+          get_url:
+            url: https://get.glennr.nl/unifi/extra/unifi-lets-encrypt.sh
+            dest: /root/unifi-lets-encrypt.sh
+            mode: '0744'
+        - name: run install script
+          shell: bash -c "bash /root/unifi-lets-encrypt.sh --skip --fqdn {{ domain }} --email {{ email }} >> /tmp/unifi.ansible.dbg.log"

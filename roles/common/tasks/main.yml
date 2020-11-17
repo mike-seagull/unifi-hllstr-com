@@ -1,0 +1,64 @@
+---
+- name: run "apt-get update"
+  apt:
+    update_cache: yes
+- name: install packages
+  apt:
+    name:
+      - vim
+      - aptitude
+      - zsh
+      - git-core
+- name: create "{{ sshgroup }}" group
+  group:
+    name: "{{ sshgroup }}"
+    state: present
+- name: adding current user to new "{{ sshgroup }}" group
+  user:
+    name: ubuntu
+    groups: "{{ sshgroup }}"
+    append: yes
+- name: remove "deny PasswordAuthentication" if it exists
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    state: absent
+    regexp: '^PasswordAuthentication no'
+    backup: yes
+- name: copy sshd config file
+  copy:
+    src: ssh_group.conf
+    dest: /etc/ssh/sshd_config.d/
+    owner: root
+    group: root
+    mode: 0644
+    force: yes
+  notify: restart sshd
+- name: make my user
+  user:
+    name: "{{ username }}"
+    password: "{{ password }}"
+    groups:
+      - sudo
+      - adm
+      - "{{ sshgroup }}"
+    state: present
+- name: install and configure ohmyzsh
+  include_role:
+    name: manala.ohmyzsh
+    apply:
+      become: yes
+  vars:
+    update: true
+    manala_ohmyzsh_users:
+      - user: "{{ username }}"
+        template: users/default.j2
+        config:
+          - ZSH_THEME: fishy
+          - plugins: (ubuntu)
+- name: chown new user dir
+  file:
+    path: "/home/{{ username }}"
+    state: directory
+    recurse: yes
+    owner: "{{ username }}"
+    group: "{{ username }}"
