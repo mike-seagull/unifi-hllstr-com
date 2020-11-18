@@ -31,7 +31,7 @@ tf: terraform
 
 terraform-clean:
 	cd terraform; \
-	terraform destroy -auto-approve && \
+	terraform destroy -auto-approve -var="hostname=$(HOSTNAME)" -var="displayname=$(DISPLAYNAME)" && \
 	(rm -rf .terraform; \
 	rm -rf *.tfstate; \
 	rm -rf *.tfstate.*)

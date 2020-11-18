@@ -21,11 +21,9 @@
             mode: '0744'
         - name: run install script
           shell: bash -c "bash /root/unifi-latest.sh --skip --fqdn {{ domain }} --email {{ email }} >> /tmp/unifi.ansible.dbg.log"
-    - name: kill iptables
-      service:
-        name: iptables
-        state: stopped
-        enabled: no
+    - name: flush iptables
+      iptables:
+        flush: yes
     - name: install lets encrypt
       block:
         - name: run "apt-get update"
