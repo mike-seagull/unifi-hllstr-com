@@ -5,7 +5,7 @@ ifeq (, $(shell which ansible))
 ifeq ($(shell uname -s),Darwin)
 	brew install ansible
 endif
-ifneq ($(filter %86,$(shell uname -p)),)
+ifeq ("iSH", "$(shell uname -v | head -c 3)")
 	apk add ansible
 endif
 else
@@ -15,7 +15,7 @@ ifeq (, $(shell which terraform))
 ifeq ($(shell uname -s),Darwin)
 	brew tap hashicorp/tap && brew install hashicorp/tap/terraform
 endif
-ifneq ($(filter %86,$(shell uname -p)),)
+ifeq ("iSH", "$(shell uname -v | head -c 3)")
 	apk add terraform --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main
 endif
 else
